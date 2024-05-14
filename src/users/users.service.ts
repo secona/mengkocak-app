@@ -27,10 +27,8 @@ export class UsersService {
     })
   }
 
-  async deleteUser(id: string) {
-    this.prisma.user.delete({
-      where: { id },
-    });
+  async deleteUser(where: Prisma.UserWhereUniqueInput) {
+    return this.prisma.user.delete({ where });
   }
 
   private async hashPassword(password: string): Promise<string> {

@@ -1,6 +1,7 @@
-import { BadRequestException, Body, Controller, Get, InternalServerErrorException, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma, User } from '@prisma/client';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -38,11 +39,14 @@ export class UsersController {
     return user;
   }
 
-  @Patch(":userId")
+  @Patch()
+  @UseGuards(AuthGuard)
   async updateUser(
-    @Param("userId") userId: string,
+    @Request() req: any,
     @Body() data: Record<string, any>
   ): Promise<User> {
+    const userId = req.user.userId;
+
     const user = await this.usersService.updateUser(userId, {
       name: data.name,
     });
@@ -50,9 +54,11 @@ export class UsersController {
     return user;
   }
 
-  // TODO
-  // @Delete(":userId")
-  // async deleteUser(@Param("userId") userId: string) {
-  //   this.usersService.deleteUser(userId);
-  // }
+  @Delete()
+  @UseGuards(AuthGuard)
+  async deleteUser(@Request() req: any) {
+    const userId = req.user.userId;
+
+    await this.usersService.deleteUser({ id: userId });
+  }
 }
