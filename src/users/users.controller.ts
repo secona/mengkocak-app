@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, InternalServerErrorException, Param, Patch, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma, User } from '@prisma/client';
 
@@ -31,6 +31,7 @@ export class UsersController {
         }
       }
 
+      console.log(e);
       throw new InternalServerErrorException();
     });
 
