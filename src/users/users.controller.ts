@@ -45,7 +45,7 @@ export class UsersController {
     @Request() req: any,
     @Body() data: Record<string, any>
   ): Promise<User> {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     const user = await this.usersService.updateUser(userId, {
       name: data.name,
@@ -57,7 +57,7 @@ export class UsersController {
   @Delete()
   @UseGuards(AuthGuard)
   async deleteUser(@Request() req: any) {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     await this.usersService.deleteUser({ id: userId });
   }
