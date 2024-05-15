@@ -1,10 +1,16 @@
-import { CanActivate, ExecutionContext, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { Request } from "express";
-import { JokesService } from "./jokes.service";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Request } from 'express';
+import { JokesService } from './jokes.service';
 
 @Injectable()
 export class JokesGuard implements CanActivate {
-  constructor(private jokesService: JokesService) { };
+  constructor(private jokesService: JokesService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();

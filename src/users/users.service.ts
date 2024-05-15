@@ -1,20 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from "bcrypt";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) { };
+  constructor(private prisma: PrismaService) {}
 
   async getUsers(): Promise<User[]> {
     return this.prisma.user.findMany();
   }
 
-  async getUser(where: Prisma.UserWhereUniqueInput, withJokes?: boolean): Promise<User> {
+  async getUser(
+    where: Prisma.UserWhereUniqueInput,
+    withJokes?: boolean,
+  ): Promise<User> {
     return this.prisma.user.findUnique({
       where,
-      include: { jokes: withJokes }
+      include: { jokes: withJokes },
     });
   }
 
@@ -27,7 +30,7 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id },
       data,
-    })
+    });
   }
 
   async deleteUser(where: Prisma.UserWhereUniqueInput) {

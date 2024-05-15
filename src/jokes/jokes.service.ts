@@ -4,7 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class JokesService {
-  constructor(private prisma: PrismaService) { };
+  constructor(private prisma: PrismaService) {}
 
   async getJokes(): Promise<Joke[]> {
     return this.prisma.joke.findMany();
@@ -19,13 +19,16 @@ export class JokesService {
       data: {
         joke,
         author: {
-          connect: { id: userId }
-        }
-      }
-    })
+          connect: { id: userId },
+        },
+      },
+    });
   }
 
-  async updateJoke(jokeId: string, data: Prisma.JokeUpdateInput): Promise<Joke> {
+  async updateJoke(
+    jokeId: string,
+    data: Prisma.JokeUpdateInput,
+  ): Promise<Joke> {
     return this.prisma.joke.update({
       where: { id: jokeId },
       data,
