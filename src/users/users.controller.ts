@@ -37,13 +37,10 @@ export class UsersController {
 
   @Post()
   async createUser(@Body() data: CreateUserDTO): Promise<User> {
-    console.log(data);
     const user = await this.usersService.createUser(data).catch((e) => {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2002') {
-          throw new BadRequestException(
-            'User with the same username already exists.',
-          );
+          throw new BadRequestException(['username already exists']);
         }
       }
 
