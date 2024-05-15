@@ -18,11 +18,11 @@ export class JokesGuard implements CanActivate {
     const joke = await this.jokesService.getJoke(request.params.jokeId);
 
     if (!joke) {
-      throw new NotFoundException();
+      throw new NotFoundException(['joke cannot be found']);
     }
 
     if (joke.authorId != request['user'].id) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(['you do not have access to this joke']);
     }
 
     return true;
