@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Joke } from '@prisma/client';
+import { Joke, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -8,6 +8,10 @@ export class JokesService {
 
   async getJokes(): Promise<Joke[]> {
     return this.prisma.joke.findMany();
+  }
+
+  async getJoke(jokeId: string): Promise<Joke> {
+    return this.prisma.joke.findUnique({ where: { id: jokeId } });
   }
 
   async newJoke(joke: string, userId: string): Promise<Joke> {
@@ -19,5 +23,18 @@ export class JokesService {
         }
       }
     })
+  }
+
+  async updateJoke(jokeId: string, data: Prisma.JokeUpdateInput): Promise<Joke> {
+    return this.prisma.joke.update({
+      where: { id: jokeId },
+      data,
+    });
+  }
+
+  async deleteJoke(jokeId: string) {
+    await this.prisma.joke.delete({
+      where: { id: jokeId },
+    });
   }
 }
