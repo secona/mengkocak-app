@@ -15,6 +15,8 @@ import {
 import { UsersService } from './users.service';
 import { Prisma, User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -34,25 +36,20 @@ export class UsersController {
   }
 
   @Post()
-  async createUser(@Body() data: Record<string, any>): Promise<User> {
-    const user = await this.usersService
-      .createUser({
-        name: data.name,
-        username: data.username,
-        password: data.password,
-      })
-      .catch((e) => {
-        if (e instanceof Prisma.PrismaClientKnownRequestError) {
-          if (e.code === 'P2002') {
-            throw new BadRequestException(
-              'User with the same username already exists.',
-            );
-          }
+  async createUser(@Body() data: CreateUserDTO): Promise<User> {
+    console.log(data);
+    const user = await this.usersService.createUser(data).catch((e) => {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          throw new BadRequestException(
+            'User with the same username already exists.',
+          );
         }
+      }
 
-        console.log(e);
-        throw new InternalServerErrorException();
-      });
+      console.log(e);
+      throw new InternalServerErrorException();
+    });
 
     return user;
   }
@@ -61,13 +58,11 @@ export class UsersController {
   @UseGuards(AuthGuard)
   async updateUser(
     @Request() req: any,
-    @Body() data: Record<string, any>,
+    @Body() data: UpdateUserDTO,
   ): Promise<User> {
     const userId = req.user.id;
 
-    const user = await this.usersService.updateUser(userId, {
-      name: data.name,
-    });
+    const user = await this.usersService.updateUser(userId, data);
 
     return user;
   }

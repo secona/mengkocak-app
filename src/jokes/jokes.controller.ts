@@ -12,32 +12,31 @@ import {
 import { JokesService } from './jokes.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { JokesGuard } from './jokes.guard';
+import { CreateJokeDTO } from './dto/create-joke.dto';
+import { UpdateJokeDTO } from './dto/update-joke.dto';
 
 @Controller('jokes')
 export class JokesController {
   constructor(private jokesService: JokesService) {}
 
   @Get()
-  getJokes() {
+  async getJokes() {
     return this.jokesService.getJokes();
   }
 
   @Post()
   @UseGuards(AuthGuard)
-  newJoke(@Body() body: Record<string, any>, @Request() req: any) {
-    const joke = body.joke;
-    return this.jokesService.newJoke(joke, req.user.id);
+  async createJoke(@Body() body: CreateJokeDTO, @Request() req: any) {
+    return this.jokesService.newJoke(body.joke, req.user.id);
   }
 
   @Patch(':jokeId')
   @UseGuards(AuthGuard, JokesGuard)
-  updateJoke(
-    @Body() body: Record<string, any>,
+  async updateJoke(
+    @Body() data: UpdateJokeDTO,
     @Param('jokeId') jokeId: string,
   ) {
-    return this.jokesService.updateJoke(jokeId, {
-      joke: body.joke,
-    });
+    return this.jokesService.updateJoke(jokeId, data);
   }
 
   @Delete(':jokeId')
