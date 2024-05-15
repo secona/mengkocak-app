@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma, User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -15,8 +15,11 @@ export class UsersController {
   }
 
   @Get(":userId")
-  async getUser(@Param("userId") userId: string): Promise<User> {
-    return this.usersService.getUser({ id: userId });
+  async getUser(
+    @Param("userId") userId: string,
+    @Query("jokes") withJokes: string,
+  ): Promise<User> {
+    return this.usersService.getUser({ id: userId }, withJokes === "true");
   }
 
   @Post()
