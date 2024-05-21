@@ -22,6 +22,33 @@ import { UpdateUserDTO } from './dto/update-user.dto';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @Get("profile")
+  @UseGuards(AuthGuard)
+  getLoggedInUser(@Request() req: any): User {
+    return req.user;
+  }
+
+  @Patch("profile")
+  @UseGuards(AuthGuard)
+  async updateUser(
+    @Request() req: any,
+    @Body() data: UpdateUserDTO,
+  ): Promise<User> {
+    const userId = req.user.id;
+
+    const user = await this.usersService.updateUser(userId, data);
+
+    return user;
+  }
+
+  @Delete("profile")
+  @UseGuards(AuthGuard)
+  async deleteUser(@Request() req: any) {
+    const userId = req.user.id;
+
+    return await this.usersService.deleteUser({ id: userId });
+  }
+
   @Get()
   async getUsers(): Promise<User[]> {
     return this.usersService.getUsers();
@@ -49,26 +76,5 @@ export class UsersController {
     });
 
     return user;
-  }
-
-  @Patch()
-  @UseGuards(AuthGuard)
-  async updateUser(
-    @Request() req: any,
-    @Body() data: UpdateUserDTO,
-  ): Promise<User> {
-    const userId = req.user.id;
-
-    const user = await this.usersService.updateUser(userId, data);
-
-    return user;
-  }
-
-  @Delete()
-  @UseGuards(AuthGuard)
-  async deleteUser(@Request() req: any) {
-    const userId = req.user.id;
-
-    await this.usersService.deleteUser({ id: userId });
   }
 }
