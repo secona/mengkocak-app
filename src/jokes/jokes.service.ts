@@ -6,8 +6,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class JokesService {
   constructor(private prisma: PrismaService) {}
 
-  async getJokes(): Promise<Joke[]> {
-    return this.prisma.joke.findMany();
+  async getJokes(userId?: string, take?: number, skip?: number): Promise<Joke[]> {
+    return this.prisma.joke.findMany({
+      where: {
+        authorId: userId,
+      },
+      take,
+      skip,
+    });
   }
 
   async getJoke(jokeId: string): Promise<Joke> {
@@ -19,7 +25,7 @@ export class JokesService {
       data: {
         joke,
         author: {
-          connect: { id: userId },
+    connect: { id: userId },
         },
       },
     });

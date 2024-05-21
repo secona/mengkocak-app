@@ -7,8 +7,11 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async getUsers(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  async getUsers(take?: number, skip?: number): Promise<User[]> {
+    return this.prisma.user.findMany({
+      take,
+      skip,
+    });
   }
 
   async getUser(

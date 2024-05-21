@@ -5,7 +5,10 @@ import {
   Delete,
   Get,
   InternalServerErrorException,
+  NotFoundException,
   Param,
+  ParseBoolPipe,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -50,16 +53,25 @@ export class UsersController {
   }
 
   @Get()
-  async getUsers(): Promise<User[]> {
-    return this.usersService.getUsers();
+  async getUsers(
+    @Query('take', new ParseIntPipe({ optional: true })) take?: number,
+    @Query('skip', new ParseIntPipe({ optional: true })) skip?: number,
+  ): Promise<User[]> {
+    return this.usersService.getUsers(take, skip);
   }
 
   @Get(':userId')
   async getUser(
     @Param('userId') userId: string,
-    @Query('jokes') withJokes: string,
+    @Query('jokes', new ParseBoolPipe({ optional: true })) withJokes: boolean,
   ): Promise<User> {
-    return this.usersService.getUser({ id: userId }, withJokes === 'true');
+    const user = await this.usersService.getUser({ id: userId }, withJokes);
+
+    if (user == null) {
+      throw new NotFoundException("User with ID " + userId + " not found.");
+    }
+
+    return user;
   }
 
   @Post()

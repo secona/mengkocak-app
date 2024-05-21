@@ -4,8 +4,10 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -20,8 +22,12 @@ export class JokesController {
   constructor(private jokesService: JokesService) {}
 
   @Get()
-  async getJokes() {
-    return this.jokesService.getJokes();
+  async getJokes(
+    @Query("userId") userId?: string,
+    @Query("take", new ParseIntPipe({ optional: true })) take?: number,
+    @Query("skip", new ParseIntPipe({ optional: true })) skip?: number,
+  ) {
+    return this.jokesService.getJokes(userId, take, skip);
   }
 
   @Post()
