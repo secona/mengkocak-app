@@ -12,7 +12,7 @@ import {
   Patch,
   Post,
   Query,
-  Request,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -21,21 +21,24 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { PaginationInput } from 'src/common/option/pagination.option';
+import { PaginationMetaDTO } from 'src/common/dto/pagination-meta.dto';
+import { PaginationLinksDTO } from 'src/common/dto/pagination-links.dto';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @Get('profile')
   @UseGuards(AuthGuard)
-  getLoggedInUser(@Request() req: any): User {
+  getLoggedInUser(@Req() req: any): User {
     return req.user;
   }
 
   @Patch('profile')
   @UseGuards(AuthGuard)
   async updateUser(
-    @Request() req: any,
+    @Req() req: any,
     @Body() data: UpdateUserDTO,
   ): Promise<User> {
     const userId = req.user.id;
@@ -47,7 +50,7 @@ export class UsersController {
 
   @Delete('profile')
   @UseGuards(AuthGuard)
-  async deleteUser(@Request() req: any) {
+  async deleteUser(@Req() req: any) {
     const userId = req.user.id;
 
     await this.usersService.deleteUser({ id: userId });
@@ -55,13 +58,22 @@ export class UsersController {
 
   @Get()
   async getUsers(
+    @Req() req: Request,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 0,
     @Query('pageSize', new ParseIntPipe({ optional: true }))
     pageSize: number = 10,
-  ): Promise<User[]> {
-    return this.usersService.getUsers(
+  ) {
+    const [count, users] = await this.usersService.getUsers(
       PaginationInput.fromPageFormat(page, pageSize),
     );
+
+    const paginationMeta = new PaginationMetaDTO(page, pageSize, count);
+
+    return {
+      meta: paginationMeta,
+      links: new PaginationLinksDTO(paginationMeta, req.path),
+      records: users,
+    }
   }
 
   @Get(':userId')

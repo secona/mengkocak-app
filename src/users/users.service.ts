@@ -8,10 +8,13 @@ import { PaginationInput } from 'src/common/option/pagination.option';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async getUsers(paginationInput?: PaginationInput): Promise<User[]> {
-    return this.prisma.user.findMany({
-      ...paginationInput,
-    });
+  async getUsers(paginationInput?: PaginationInput): Promise<[number, User[]]> {
+    return this.prisma.$transaction([
+      this.prisma.user.count(),
+      this.prisma.user.findMany({
+        ...paginationInput,
+      }),
+    ]);
   }
 
   async getUser(

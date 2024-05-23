@@ -10,13 +10,20 @@ export class JokesService {
   async getJokes(
     userId?: string,
     paginationInput?: PaginationInput,
-  ): Promise<Joke[]> {
-    return this.prisma.joke.findMany({
-      ...paginationInput,
-      where: {
-        authorId: userId,
-      },
-    });
+  ): Promise<[number, Joke[]]> {
+    const where = {
+      authorId: userId,
+    };
+
+    return this.prisma.$transaction([
+      this.prisma.joke.count({ where }),
+      this.prisma.joke.findMany({
+        ...paginationInput,
+        where: {
+          authorId: userId,
+        },
+      })
+    ]);
   }
 
   async getJoke(jokeId: string): Promise<Joke> {
