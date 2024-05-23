@@ -19,9 +19,7 @@ export class JokesService {
       this.prisma.joke.count({ where }),
       this.prisma.joke.findMany({
         ...paginationInput,
-        where: {
-          authorId: userId,
-        },
+        where,
       })
     ]);
   }

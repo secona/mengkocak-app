@@ -16,7 +16,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
@@ -24,6 +24,7 @@ import { PaginationInput } from 'src/common/option/pagination.option';
 import { PaginationMetaDTO } from 'src/common/dto/pagination-meta.dto';
 import { PaginationLinksDTO } from 'src/common/dto/pagination-links.dto';
 import { Request } from 'express';
+import { UserEntity } from './users.entity';
 
 @Controller('users')
 export class UsersController {
@@ -31,21 +32,25 @@ export class UsersController {
 
   @Get('profile')
   @UseGuards(AuthGuard)
-  getLoggedInUser(@Req() req: any): User {
-    return req.user;
+  getLoggedInUser(@Req() req: Request) {
+    return {
+      record: new UserEntity(req['user']),
+    }
   }
 
   @Patch('profile')
   @UseGuards(AuthGuard)
   async updateUser(
-    @Req() req: any,
+    @Req() req: Request,
     @Body() data: UpdateUserDTO,
-  ): Promise<User> {
-    const userId = req.user.id;
+  ) {
+    const userId = req['user'].id;
 
     const user = await this.usersService.updateUser(userId, data);
 
-    return user;
+    return {
+      record: new UserEntity(user),
+    };
   }
 
   @Delete('profile')
@@ -72,7 +77,7 @@ export class UsersController {
     return {
       meta: paginationMeta,
       links: new PaginationLinksDTO(paginationMeta, req.path),
-      records: users,
+      records: UserEntity.fromPrismaUsers(users),
     }
   }
 
@@ -80,18 +85,20 @@ export class UsersController {
   async getUser(
     @Param('userId') userId: string,
     @Query('jokes', new ParseBoolPipe({ optional: true })) withJokes: boolean,
-  ): Promise<User> {
+  ) {
     const user = await this.usersService.getUser({ id: userId }, withJokes);
 
     if (user == null) {
       throw new NotFoundException('User with ID ' + userId + ' not found.');
     }
 
-    return user;
+    return {
+      record: new UserEntity(user),
+    };
   }
 
   @Post()
-  async createUser(@Body() data: CreateUserDTO): Promise<User> {
+  async createUser(@Body() data: CreateUserDTO) {
     const user = await this.usersService.createUser(data).catch((e) => {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2002') {
@@ -99,10 +106,11 @@ export class UsersController {
         }
       }
 
-      console.log(e);
       throw new InternalServerErrorException();
     });
 
-    return user;
+    return {
+      record: new UserEntity(user),
+    };
   }
 }

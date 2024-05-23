@@ -47,10 +47,21 @@ export class JokesController {
     }
   }
 
+  @Get(":jokeId")
+  async getJoke(@Param("jokeId") jokeId: string) {
+    const joke = await this.jokesService.getJoke(jokeId);
+    return {
+      record: joke,
+    };
+  }
+
   @Post()
   @UseGuards(AuthGuard)
   async createJoke(@Body() body: CreateJokeDTO, @Req() req: any) {
-    return this.jokesService.newJoke(body.joke, req.user.id);
+    const joke = await this.jokesService.newJoke(body.joke, req.user.id);
+    return {
+      record: joke,
+    }
   }
 
   @Patch(':jokeId')
@@ -59,7 +70,10 @@ export class JokesController {
     @Body() data: UpdateJokeDTO,
     @Param('jokeId') jokeId: string,
   ) {
-    return this.jokesService.updateJoke(jokeId, data);
+    const joke = await this.jokesService.updateJoke(jokeId, data);
+    return {
+      record: joke,
+    };
   }
 
   @Delete(':jokeId')
