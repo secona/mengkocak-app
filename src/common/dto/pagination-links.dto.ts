@@ -1,3 +1,4 @@
+import { BadRequestException } from "@nestjs/common";
 import { PaginationMetaDTO } from "./pagination-meta.dto";
 
 export class PaginationLinksDTO {
@@ -10,8 +11,8 @@ export class PaginationLinksDTO {
 			pageSize: paginationMeta.pageSize.toString(),
 		});
 
-		if (paginationMeta.pageIndex > paginationMeta.pageCount || paginationMeta.pageIndex < 0) {
-			return;
+		if (paginationMeta.pageIndex >= paginationMeta.pageCount || paginationMeta.pageIndex < 0) {
+			throw new BadRequestException("Pagination index out of bounds.");
 		}
 
 		// check if there is a next page
