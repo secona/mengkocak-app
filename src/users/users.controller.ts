@@ -20,18 +20,19 @@ import { Prisma, User } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { PaginationInput } from 'src/common/option/pagination.option';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @Get("profile")
+  @Get('profile')
   @UseGuards(AuthGuard)
   getLoggedInUser(@Request() req: any): User {
     return req.user;
   }
 
-  @Patch("profile")
+  @Patch('profile')
   @UseGuards(AuthGuard)
   async updateUser(
     @Request() req: any,
@@ -44,7 +45,7 @@ export class UsersController {
     return user;
   }
 
-  @Delete("profile")
+  @Delete('profile')
   @UseGuards(AuthGuard)
   async deleteUser(@Request() req: any) {
     const userId = req.user.id;
@@ -54,10 +55,13 @@ export class UsersController {
 
   @Get()
   async getUsers(
-    @Query('take', new ParseIntPipe({ optional: true })) take?: number,
-    @Query('skip', new ParseIntPipe({ optional: true })) skip?: number,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 0,
+    @Query('pageSize', new ParseIntPipe({ optional: true }))
+    pageSize: number = 10,
   ): Promise<User[]> {
-    return this.usersService.getUsers(take, skip);
+    return this.usersService.getUsers(
+      PaginationInput.fromPageFormat(page, pageSize),
+    );
   }
 
   @Get(':userId')
@@ -68,7 +72,7 @@ export class UsersController {
     const user = await this.usersService.getUser({ id: userId }, withJokes);
 
     if (user == null) {
-      throw new NotFoundException("User with ID " + userId + " not found.");
+      throw new NotFoundException('User with ID ' + userId + ' not found.');
     }
 
     return user;

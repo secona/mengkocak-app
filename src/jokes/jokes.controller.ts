@@ -16,6 +16,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { JokesGuard } from './jokes.guard';
 import { CreateJokeDTO } from './dto/create-joke.dto';
 import { UpdateJokeDTO } from './dto/update-joke.dto';
+import { PaginationInput } from 'src/common/option/pagination.option';
 
 @Controller('jokes')
 export class JokesController {
@@ -23,11 +24,15 @@ export class JokesController {
 
   @Get()
   async getJokes(
-    @Query("userId") userId?: string,
-    @Query("take", new ParseIntPipe({ optional: true })) take?: number,
-    @Query("skip", new ParseIntPipe({ optional: true })) skip?: number,
+    @Query('userId') userId?: string,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 0,
+    @Query('pageSize', new ParseIntPipe({ optional: true }))
+    pageSize: number = 10,
   ) {
-    return this.jokesService.getJokes(userId, take, skip);
+    return this.jokesService.getJokes(
+      userId,
+      PaginationInput.fromPageFormat(page, pageSize),
+    );
   }
 
   @Post()

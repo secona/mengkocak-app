@@ -1,18 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { Joke, Prisma } from '@prisma/client';
+import { PaginationInput } from 'src/common/option/pagination.option';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class JokesService {
   constructor(private prisma: PrismaService) {}
 
-  async getJokes(userId?: string, take?: number, skip?: number): Promise<Joke[]> {
+  async getJokes(
+    userId?: string,
+    paginationInput?: PaginationInput,
+  ): Promise<Joke[]> {
     return this.prisma.joke.findMany({
+      ...paginationInput,
       where: {
         authorId: userId,
       },
-      take,
-      skip,
     });
   }
 
@@ -25,7 +28,7 @@ export class JokesService {
       data: {
         joke,
         author: {
-    connect: { id: userId },
+          connect: { id: userId },
         },
       },
     });

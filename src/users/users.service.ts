@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { PaginationInput } from 'src/common/option/pagination.option';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async getUsers(take?: number, skip?: number): Promise<User[]> {
+  async getUsers(paginationInput?: PaginationInput): Promise<User[]> {
     return this.prisma.user.findMany({
-      take,
-      skip,
+      ...paginationInput,
     });
   }
 
