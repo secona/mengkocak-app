@@ -1,0 +1,41 @@
+services:
+  backend:
+    container_name: mengkocak-app-backend
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: .
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+
+  db:
+    image: postgres:14
+    container_name: mengkocak-app-postgres
+    restart: always
+    user: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mengkocak
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+
+volumes:
+  postgres-data:
