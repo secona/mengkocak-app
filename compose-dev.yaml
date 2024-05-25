@@ -24,8 +24,9 @@ services:
       - 3000:3000
     depends_on:
       - db
-    env_file:
-      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@mengkocak-app-postgres:5432/mengkocak
+      JWT_TOKEN: dev_token # only a temporary value for development
     volumes:
       - ./backend:/backend
       - /backend/node_modules
