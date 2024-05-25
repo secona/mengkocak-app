@@ -1,4 +1,3 @@
-import { URL } from "url";
 import { PaginationOptions, PaginationResponse, Response } from "./common";
 import { User } from "./User";
 
@@ -15,6 +14,7 @@ export interface GetOneOptions {
 }
 
 export interface GetManyOptions {
+  userId?: string;
   withUser?: string;
 }
 
@@ -66,19 +66,28 @@ export class Joke {
     return res.json();
   }
 
-  static async delete(jokeId: string) {
+  static async delete(token: string, jokeId: string) {
     const url = new URL(Joke.JOKES_API_URL);
     url.pathname += "/" + jokeId;
 
-    await fetch(url, { method: "DELETE" });
+    await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Authorization": "Bearer " + token,
+      }
+    });
   }
 
-  static async update(jokeId: string, data: UpdateJokeDTO): Promise<Response<Joke>> {
+  static async update(token: string, jokeId: string, data: UpdateJokeDTO): Promise<Response<Joke>> {
     const url = new URL(Joke.JOKES_API_URL);
     url.pathname += "/" + jokeId;
 
     const res = await fetch(url, {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+      },
       body: JSON.stringify(data),
     });
 

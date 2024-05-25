@@ -5,10 +5,9 @@ import { useFormState } from "react-dom";
 import { loginAction } from "./actions";
 
 export default function Login() {
-	const [state, action] = useFormState(loginAction, "");
+	const [loggedIn, action] = useFormState(loginAction, false);
 
-	if (state != "") {
-		localStorage.setItem("auth", state);
+	if (loggedIn) {
 		redirect("/");
 	}
 

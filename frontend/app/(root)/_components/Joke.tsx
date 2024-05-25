@@ -6,7 +6,7 @@ interface JokeProps {
 
 export const Joke = ({ joke }: JokeProps) => {
   return (
-    <div className="rounded-lg px-4 py-2 bg-white">
+    <div className="flex-grow rounded-lg px-4 py-2 bg-white">
       <p className="">
         <span className="font-bold mr-1">
           {joke.author?.name}

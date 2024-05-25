@@ -15,8 +15,8 @@ export interface GetManyOptions {
 }
 
 export class User {
-  private static USER_API_URL = new URL("users", process.env.API_URL);
-  private static PROFILE_API_URL = new URL("users/profile", process.env.API_URL);
+  private static USER_API_URL = process.env.API_URL + "/users";
+  private static PROFILE_API_URL = process.env.API_URL + "/users/profile";
 
   id!: string;
   name!: string;
@@ -54,23 +54,35 @@ export class User {
     return res.json();
   }
 
-  static async getLoggedIn(): Promise<Response<User>> {
-    const res = await fetch(User.PROFILE_API_URL);
+  static async getLoggedIn(token: string): Promise<Response<User>> {
+    const res = await fetch(User.PROFILE_API_URL, {
+      headers: {
+        "Authorization": "Bearer " + token,
+      }
+    });
+
     return res.json();
   }
 
-  static async updateLoggedIn(data: UpdateUserDTO): Promise<Response<User>> {
+  static async updateLoggedIn(token: string, data: UpdateUserDTO): Promise<Response<User>> {
     const res = await fetch(User.PROFILE_API_URL, {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+      },
       body: JSON.stringify(data),
     });
 
     return res.json();
   }
 
-  static async deleteLoggedIn() {
+  static async deleteLoggedIn(token: string) {
     await fetch(User.PROFILE_API_URL, {
       method: "DELETE",
+      headers: {
+        "Authorization": "Bearer " + token,
+      },
     });
   }
 }
