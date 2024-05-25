@@ -6,7 +6,7 @@ interface JokeProps {
 
 export const Joke = (props: JokeProps) => {
   return (
-    <div className="rounded-lg px-4 py-2 bg-blue-100">
+    <div className="rounded-lg px-4 py-2 bg-white">
       {props.joke.joke}
     </div>
   );

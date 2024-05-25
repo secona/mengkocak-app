@@ -6,7 +6,7 @@ export default async function Home() {
 
   return (
     <main>
-      <div className="grid grid-cols-4 gap-3 p-10">
+      <div className="flex flex-col flex-wrap max-w-2xl gap-2 py-8 mx-auto">
         {res.records.map(record => <Joke joke={record} />)}
       </div>
     </main>
