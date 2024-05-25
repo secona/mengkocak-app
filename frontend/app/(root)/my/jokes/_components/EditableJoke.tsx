@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Joke as JokeType } from "@/api/Joke";
 import { Joke } from "@/app/(root)/_components/Joke";
 import { EditJokeForm } from "./EditJokeForm";
+import { deleteJoke } from "../actions";
 
 interface JokeProps {
   joke: JokeType
@@ -27,6 +28,7 @@ export const EditableJoke = ({ joke }: JokeProps) => {
 					Edit
 				</button>
 				<button
+					onClick={() => deleteJoke(joke)}
 					className="py-0 px-0 text-sm text-gray-400"
 				>
 					Delete

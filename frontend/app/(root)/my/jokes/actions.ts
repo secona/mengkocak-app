@@ -16,6 +16,16 @@ export async function editJoke(
 	const res = await Joke.update(token, joke.id, data);
 
 	revalidatePath("/my/jokes");
+	revalidatePath("/");
 
 	return { ...res.record, updated: true };
+}
+
+export async function deleteJoke(joke: Joke) {
+	const token = cookies().get("auth")!.value;
+
+	await Joke.delete(token, joke.id);
+
+	revalidatePath("/my/jokes");
+	revalidatePath("/");
 }
