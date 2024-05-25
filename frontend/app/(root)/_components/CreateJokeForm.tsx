@@ -1,6 +1,12 @@
-import { createJoke } from "../actions";
+import { createJoke, isLoggedIn } from "../actions";
 
-export function CreateJokeForm() {
+export async function CreateJokeForm() {
+  const loggedIn = await isLoggedIn();
+
+  if (!loggedIn) {
+    return <></>;
+  }
+
   return (
     <form
       className="w-full flex flex-col bg-white rounded-lg p-3 gap-2"

@@ -1,9 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { isLoggedIn, logout } from "./actions";
 
 export function Nav() {
-  const authToken = localStorage.getItem("auth");
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      setLoggedIn(await isLoggedIn());
+    })()
+  }, [])
 
   return (
     <div className="fixed z-20 w-full h-16 px-20 top-0 start-0 flex flex-row justify-between items-center bg-white shadow-lg shadow-gray-300">
@@ -12,17 +20,17 @@ export function Nav() {
         <Link href="my/jokes">My Jokes</Link>
       </div>
       <div className="flex flex-row gap-5">
-        {!authToken && (
+        {!loggedIn && (
           <>
             <Link href="register">Register</Link>
             <Link href="login">Log In</Link>
           </>
         )}
-        {authToken && (
+        {loggedIn && (
           <>
             <button
-              onClick={() => {
-                localStorage.removeItem("auth");
+              onClick={async () => {
+                await logout();
                 window.location.reload();
               }}
             >
