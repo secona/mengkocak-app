@@ -18,9 +18,9 @@ export function EditJokeForm({ joke, onSave }: EditJokeFormProps) {
   }
 
   return (
-    <form action={action}>
-      <input name="joke" defaultValue={joke.joke} />
-      <button>Save</button>
+    <form action={action} className="flex flex-row gap-2">
+      <input name="joke" defaultValue={joke.joke} className="flex-grow" />
+      <button className="primary">Save</button>
     </form>
   )
 }
