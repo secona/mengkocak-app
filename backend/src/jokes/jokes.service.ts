@@ -10,6 +10,7 @@ export class JokesService {
   async getJokes(
     userId?: string,
     paginationInput?: PaginationInput,
+    withUser?: boolean,
   ): Promise<[number, Joke[]]> {
     const where = {
       authorId: userId,
@@ -20,6 +21,9 @@ export class JokesService {
       this.prisma.joke.findMany({
         ...paginationInput,
         where,
+        include: {
+          author: withUser,
+        }
       })
     ]);
   }

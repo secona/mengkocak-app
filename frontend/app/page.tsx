@@ -2,7 +2,9 @@ import { Joke as JokeType } from "@/api/Joke";
 import { Joke } from "./_components/Joke";
 
 export default async function Home() {
-  const res = await JokeType.getMany();
+  const res = await JokeType.getMany({
+    withUser: "true"
+  });
 
   return (
     <main>

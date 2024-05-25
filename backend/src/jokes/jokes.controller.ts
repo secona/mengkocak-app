@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -20,6 +21,7 @@ import { PaginationInput } from 'src/common/option/pagination.option';
 import { PaginationMetaDTO } from 'src/common/dto/pagination-meta.dto';
 import { Request } from 'express';
 import { PaginationLinksDTO } from 'src/common/dto/pagination-links.dto';
+import { UserEntity } from 'src/users/users.entity';
 
 @Controller('jokes')
 export class JokesController {
@@ -32,13 +34,21 @@ export class JokesController {
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 0,
     @Query('pageSize', new ParseIntPipe({ optional: true }))
     pageSize: number = 10,
+    @Query('withUser', new ParseBoolPipe({ optional: true })) withUser: boolean = false,
   ) {
     const [count, jokes] = await this.jokesService.getJokes(
       userId,
       PaginationInput.fromPageFormat(page, pageSize),
+      withUser,
     );
 
     const paginationMeta = new PaginationMetaDTO(page, pageSize, count);
+
+    jokes.forEach(joke => {
+      if (joke['author']) {
+        joke['author'] = new UserEntity(joke['author']);
+      }
+    });
 
     return {
       meta: paginationMeta,

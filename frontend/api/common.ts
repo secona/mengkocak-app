@@ -16,6 +16,6 @@ export interface Response<T> {
 }
 
 export interface PaginationOptions {
-  page: string,
-  pageSize: string,
+  page?: string,
+  pageSize?: string,
 }

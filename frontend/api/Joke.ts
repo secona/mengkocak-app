@@ -1,5 +1,6 @@
 import { URL } from "url";
 import { PaginationOptions, PaginationResponse, Response } from "./common";
+import { User } from "./User";
 
 export interface CreateJokeDTO {
   joke: string;
@@ -13,6 +14,10 @@ export interface GetOneOptions {
   jokes: string;
 }
 
+export interface GetManyOptions {
+  withUser?: string;
+}
+
 export class Joke {
   private static JOKES_API_URL = new URL("jokes", process.env.API_URL!);
 
@@ -20,13 +25,15 @@ export class Joke {
   authorId!: string;
   joke!: string;
 
+  author?: User;
+
   constructor(partial: Partial<Joke>) {
     Object.assign(this, partial);
   }
 
-  static async getMany(pagination?: PaginationOptions): Promise<PaginationResponse<Joke>> {
+  static async getMany(options?: PaginationOptions & GetManyOptions): Promise<PaginationResponse<Joke>> {
     const url = new URL(Joke.JOKES_API_URL);
-    url.search = new URLSearchParams({ ...pagination }).toString();
+    url.search = new URLSearchParams({ ...options }).toString();
 
     const res = await fetch(url, {
       next: {

@@ -26,9 +26,9 @@ export class User {
     Object.assign(this, partial);
   }
 
-  static async getMany(pagination?: PaginationOptions, options?: GetManyOptions): Promise<PaginationResponse<User>> {
+  static async getMany(options?: PaginationOptions & GetManyOptions): Promise<PaginationResponse<User>> {
     const url = new URL(User.USER_API_URL);
-    url.search = new URLSearchParams({ ...pagination, ...options }).toString();
+    url.search = new URLSearchParams({ ...options }).toString();
 
     const res = await fetch(url);
     return res.json();
