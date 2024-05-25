@@ -17,7 +17,7 @@ cd mengkocak-app
 #### 3) Execute Docker Compose
 Build and run the application using Docker Compose with the following command:
 ```sh
-docker compose -f compose-dev.yaml up -d --build
+docker compose -f docker-compose.yaml up -d --build
 ```
 
 ###### Additional Information
