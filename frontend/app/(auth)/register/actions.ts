@@ -2,7 +2,12 @@
 
 import { CreateUserDTO, User } from "@/api/User";
 
-export async function register(_state: boolean, formData: FormData) {
+export interface RegisterState {
+	success: boolean,
+	error: string,
+}
+
+export async function register(_state: RegisterState, formData: FormData) {
 	const data: CreateUserDTO = {
 		name: formData.get("name")!.toString(),
 		password: formData.get("password")!.toString(),
@@ -10,5 +15,16 @@ export async function register(_state: boolean, formData: FormData) {
 	}
 
 	const res = await User.create(data);
-	return !!res.record;
+
+	if (!res.record) {
+		return {
+			success: false,
+			error: (res as any).message.join("\n"),
+		};
+	}
+
+	return {
+		success: true,
+		error: "",
+	}
 }

@@ -3,7 +3,12 @@
 import { Auth, LoginDTO } from "@/api/Auth";
 import { cookies } from "next/headers";
 
-export async function loginAction(_current: boolean, formData: FormData) {
+export interface LoginState {
+	success: boolean,
+	error: string,
+}
+
+export async function loginAction(_current: LoginState, formData: FormData) {
 	const data: LoginDTO =  {
 		username: formData.get("username")!.toString(),
 		password: formData.get("password")!.toString(),
@@ -11,6 +16,16 @@ export async function loginAction(_current: boolean, formData: FormData) {
 
 	const res = await Auth.login(data);
 
+	if (!res.token) {
+		return {
+			success: false,
+			error: (res as any).message,
+		}
+	}
+
 	cookies().set("auth", res.token, { secure: true });
-	return true;
+	return {
+		success: true,
+		error: null,
+	};
 }

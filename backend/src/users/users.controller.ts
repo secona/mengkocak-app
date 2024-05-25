@@ -76,7 +76,7 @@ export class UsersController {
 
     return {
       meta: paginationMeta,
-      links: new PaginationLinksDTO(paginationMeta, req.path),
+      links: new PaginationLinksDTO(paginationMeta, req.path, count),
       records: UserEntity.fromPrismaUsers(users),
     }
   }

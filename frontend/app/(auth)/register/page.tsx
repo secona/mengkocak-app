@@ -5,9 +5,9 @@ import { useFormState } from "react-dom";
 import { register } from "./actions";
 
 export default function Login() {
-	const [success, action] = useFormState(register, false);
+	const [state, action] = useFormState(register, { success: false, error: "" });
 
-	if (success) {
+	if (state.success) {
 		redirect("/login");
 	}
 
@@ -18,6 +18,11 @@ export default function Login() {
 			<input type="text" placeholder="Name" name="name" />
 			<input type="text" placeholder="Password" name="password" />
 			<button className="primary mt-4">Login</button>
+			{state.error != "" && (
+				<div className="rounded-lg bg-red-500 text-white px-6 py-3 whitespace-pre-wrap">
+					{state.error}
+				</div>
+			)}
 		</form>
 	)
 }

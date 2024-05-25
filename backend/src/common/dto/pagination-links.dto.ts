@@ -5,11 +5,15 @@ export class PaginationLinksDTO {
 	nextPage: string;
 	prevPage: string;
 
-	constructor(paginationMeta: PaginationMetaDTO, currentPath: string) {
+	constructor(paginationMeta: PaginationMetaDTO, currentPath: string, docsCount: number) {
 		let params = new URLSearchParams({
 			page: "",
 			pageSize: paginationMeta.pageSize.toString(),
 		});
+
+		if (docsCount == 0) {
+			return;
+		}
 
 		if (paginationMeta.pageIndex >= paginationMeta.pageCount || paginationMeta.pageIndex < 0) {
 			throw new BadRequestException("Pagination index out of bounds.");

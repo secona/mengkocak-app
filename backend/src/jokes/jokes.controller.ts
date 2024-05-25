@@ -52,7 +52,7 @@ export class JokesController {
 
     return {
       meta: paginationMeta,
-      links: new PaginationLinksDTO(paginationMeta, req.path),
+      links: new PaginationLinksDTO(paginationMeta, req.path, count),
       records: jokes,
     }
   }
