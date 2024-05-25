@@ -53,9 +53,13 @@ export class Joke {
     return res.json();
   }
 
-  static async create(data: CreateJokeDTO): Promise<Response<Joke>> {
+  static async create(token: string, data: CreateJokeDTO): Promise<Response<Joke>> {
     const res = await fetch(Joke.JOKES_API_URL, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+      },
       body: JSON.stringify(data),
     });
 
