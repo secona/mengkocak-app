@@ -1,14 +1,13 @@
-async function getData() {
-  const res = await fetch(`${process.env.API_URL}`);
-  return res.text();
-}
+import { Joke } from "@/api/Joke";
 
 export default async function Home() {
-  const data = await getData();
+  const res = await Joke.getMany();
 
   return (
     <main>
-      {data}
+      <pre>
+        {JSON.stringify(res, null, 2)}
+      </pre>
     </main>
   );
 }
