@@ -3,6 +3,12 @@
 import { createJoke } from "../actions";
 
 export function CreateJokeForm() {
+  const authToken = localStorage.getItem("auth");
+
+  if (!authToken || authToken == "undefined") {
+    return <></>;
+  }
+
   return (
     <form
       className="w-full flex flex-col bg-white rounded-lg p-3 gap-2"

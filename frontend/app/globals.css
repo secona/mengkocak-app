@@ -17,3 +17,7 @@ button {
 button.primary {
 	@apply bg-blue-500 text-white hover:bg-blue-600 transition-all duration-100
 }
+
+a {
+	@apply hover:underline
+}
